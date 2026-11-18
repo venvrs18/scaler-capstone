@@ -6,7 +6,8 @@ A scalable, robust Spring Boot backend application designed for deployment on AW
 *   **Language:** Java 17+
 *   **Framework:** Spring Boot 3 (REST APIs, Data JPA)
 *   **Database:** MySQL (Configured for AWS RDS in production)
-*   **Build Tool:** Maven / Gradle
+*   **API Documentation:** SpringDoc OpenAPI (Swagger UI)
+*   **Build Tool:** Maven
 *   **Cloud (Planned):** AWS (EC2/ECS for hosting, RDS for DB, SES for emails)
 *   **Architecture:** Layered (Controller, Service, Repository, Entity, DTO)
 
@@ -15,7 +16,8 @@ A scalable, robust Spring Boot backend application designed for deployment on AW
 ## 📦 Project Structure
 ```text
 project.scaler.capstone
- ┣ 📂 controller    # REST API endpoints (e.g., AuthController, UserController)
+ ┣ 📂 config        # Application configurations (e.g., OpenAPI/Swagger config)
+ ┣ 📂 controller    # REST API endpoints
  ┣ 📂 service       # Business logic and transaction management
  ┣ 📂 repository    # Spring Data JPA interfaces for DB operations
  ┣ 📂 model         # JPA Entities representing database tables
@@ -32,11 +34,21 @@ project.scaler.capstone
 *   **Profile Management:** Fetch and update user profile details.
 *   **Password Reset:** Generate secure reset tokens and update passwords.
 
+**2. Product Catalog**
+*   **Browsing:** Retrieve all products or filter products by specific categories.
+*   **Product Details:** View detailed pages with images, prices, descriptions, and specifications.
+*   **Search:** Search for products using keywords matching the product name or description.
+
+**3. Cart & Checkout**
+*   **Add to Cart:** Add products to the user's cart (updates quantity if already present).
+*   **Cart Review:** View selected items, individual item totals, and the comprehensive cart total.
+*   **Checkout:** Finalize the purchase with a delivery address and payment method, generating an order reference.
+
 ---
 
 ## ⚙️ Setup and Installation
 
-**1. Prerequisites:** 
+**1. Prerequisites:**
 Java 17+, MySQL Server, and Maven.
 
 **2. Database & Configuration:**
@@ -50,23 +62,49 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
 ```
 
+**3. Run the Application:**
+```bash
+git clone <your-repository-url>
+cd <your-project-folder>
+./mvnw clean install -U
+./mvnw spring-boot:run
+```
+*The server will start on `http://localhost:8080`.*
+
 ---
 
-## 📖 API Endpoints 
+## 📚 API Documentation (Swagger)
+
+This project uses SpringDoc OpenAPI to automatically generate interactive API documentation.
+
+Once the application is running, you can access the documentation here:
+*   **Swagger UI (Interactive Console):** [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+*   **OpenAPI JSON Specification:** [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+
+---
+
+## 📖 API Endpoints Summary
 
 **Base URL:** `http://localhost:8080/api/v1`
 
 ### Authentication
-*   **Register:** `POST /auth/register` 
-    *   *Body:* `{ "email", "password", "firstName", "lastName" }`
-*   **Login:** `POST /auth/login` 
-    *   *Body:* `{ "email", "password" }`
-*   **Forgot Password:** `POST /auth/forgot-password` 
-    *   *Body:* `{ "email" }`
-*   **Reset Password:** `POST /auth/reset-password` 
-    *   *Body:* `{ "token", "newPassword" }`
+*   `POST /auth/register` - Register a new user
+*   `POST /auth/login` - User login
+*   `POST /auth/forgot-password` - Generate password reset token
+*   `POST /auth/reset-password` - Reset password securely
 
 ### User Profile
-*   **Get Profile:** `GET /users/{userId}/profile`
-*   **Update Profile:** `PUT /users/{userId}/profile` 
-    *   *Body:* `{ "firstName", "lastName" }`
+*   `GET /users/{userId}/profile` - Get user profile
+*   `PUT /users/{userId}/profile` - Update user profile
+
+### Product Catalog
+*   `GET /products` - Get all products
+*   `GET /products/{id}` - Get product details by ID
+*   `GET /products/category/{categoryId}` - Get products by category ID
+*   `GET /products/search?keyword={keyword}` - Search products by keyword
+
+### Cart & Checkout
+*(Note: Cart endpoints require a `UserId` header until JWT integration is complete)*
+*   `POST /cart/add` - Add item to cart
+*   `GET /cart` - View current cart and totals
+*   `POST /cart/checkout` - Checkout and place order
