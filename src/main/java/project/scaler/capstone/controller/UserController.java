@@ -1,34 +1,30 @@
 package project.scaler.capstone.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import project.scaler.capstone.dto.UserDTOs;
+import org.springframework.web.bind.annotation.*;
+import project.scaler.capstone.dto.UserDTOs.*;
 import project.scaler.capstone.service.UserService;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@Tag(name = "2. User Management", description = "Endpoints for managing user profiles")
 public class UserController {
 
     private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    public UserController(UserService userService) { this.userService = userService; }
 
-    // TODO: Remove {userId} path variable and extract ID from SecurityContext once JWT is implemented
     @GetMapping("/{userId}/profile")
-    public ResponseEntity<UserDTOs.UserResponse> getProfile(@PathVariable Long userId) {
+    @Operation(summary = "Get User Profile", description = "Retrieves profile details for a specific user.")
+    public ResponseEntity<UserResponse> getProfile(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.getProfile(userId));
     }
 
-    // TODO: Remove {userId} path variable and extract ID from SecurityContext once JWT is implemented
     @PutMapping("/{userId}/profile")
-    public ResponseEntity<UserDTOs.UserResponse> updateProfile(@PathVariable Long userId, @RequestBody UserDTOs.ProfileUpdateRequest request) {
+    @Operation(summary = "Update User Profile", description = "Updates the first and last name of the user.")
+    public ResponseEntity<UserResponse> updateProfile(@PathVariable Long userId, @RequestBody ProfileUpdateRequest request) {
         return ResponseEntity.ok(userService.updateProfile(userId, request));
     }
 }
